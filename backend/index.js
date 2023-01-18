@@ -5,6 +5,8 @@ const express = require("express");
 const path = require("path");
 const mongoose = require("mongoose");
 
+const PostModel = require("./models/postModel");
+
 const uri = process.env.MONGO_CONNECTION_URL;
 mongoose.connect(uri);
 mongoose.connection.on('error', (error) => {
@@ -17,12 +19,22 @@ mongoose.connection.on('connected', () => {
 
 const app = express();
 
+// To parse incoming requests with JSON payloads
+app.use(express.json());
+
 // In production, serve frontend from dist folder
 app.use(express.static(path.resolve(__dirname, "..") + "/frontend/dist"));
 
 app.get("/api/test", (req, res) => {
   // 200: OK
   res.status(200).json({message: "Hello from backend"});
+});
+
+app.post("/api/post", async (req, res) => {
+  const {title, text} = req.body;
+  //console.dir(req.body)
+  await PostModel.create({title, text});
+  res.status(200).json({message: "new post created"});
 });
 
 app.use((req, res) => {

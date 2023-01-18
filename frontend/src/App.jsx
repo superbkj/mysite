@@ -15,7 +15,7 @@ function App() {
     fetch("/api/test")
     .then(res => res.json())
     .then(data => {
-      console.log(data.message);
+      //console.log(data.message);
       setMessage(data.message);
     });
   };
@@ -30,7 +30,7 @@ function App() {
           <Route path="/search" element={<Search />}></Route>
           <Route path="/post" element={<PostForm />}></Route>
         </Routes>
-        <p>{message}</p>
+        <p>Message from backend: {message}</p>
         <button onClick={handleClick}>Click me</button>
         <Footer />
       </BrowserRouter>
