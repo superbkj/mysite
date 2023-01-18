@@ -1,5 +1,12 @@
 import { useState } from 'react';
-import './App.css';
+import {BrowserRouter, Routes, Route} from "react-router-dom";
+
+import Header from "./components/Header";
+import Footer from "./components/Footer";
+import Home from "./components/Home";
+import Latest from "./components/Latest";
+import Search from "./components/Search";
+import PostForm from "./components/PostForm";
 
 function App() {
   const [message, setMessage] = useState("");
@@ -15,8 +22,18 @@ function App() {
 
   return (
     <div className="App">
-      <p>{message}</p>
-      <button onClick={handleClick}>Click here</button>
+      <BrowserRouter>
+        <Header />
+        <Routes>
+          <Route path="/" element={<Home />}></Route>
+          <Route path="/new" element={<Latest />}></Route>
+          <Route path="/search" element={<Search />}></Route>
+          <Route path="/post" element={<PostForm />}></Route>
+        </Routes>
+        <p>{message}</p>
+        <button onClick={handleClick}>Click me</button>
+        <Footer />
+      </BrowserRouter>
     </div>
   );
 }
