@@ -5,7 +5,7 @@ function App() {
   const [message, setMessage] = useState("");
 
   const handleClick = () => {
-    fetch("http://localhost:3001/test")
+    fetch("/api/test")
     .then(res => res.json())
     .then(data => {
       console.log(data.message);
@@ -16,7 +16,7 @@ function App() {
   return (
     <div className="App">
       <p>{message}</p>
-      <button onClick={handleClick}>Click</button>
+      <button onClick={handleClick}>Click here</button>
     </div>
   );
 }

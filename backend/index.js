@@ -1,16 +1,26 @@
+// reads in .env file and makes those values available as environment variables
+require('dotenv').config();
+
 const express = require("express");
 const path = require("path");
-const cors = require("cors");
+const mongoose = require("mongoose");
+
+const uri = process.env.MONGO_CONNECTION_URL;
+mongoose.connect(uri);
+mongoose.connection.on('error', (error) => {
+  console.log(error);
+  process.exit(1);
+});
+mongoose.connection.on('connected', () => {
+  console.log('Connected to mongo');
+});
 
 const app = express();
 
 // In production, serve frontend from dist folder
 app.use(express.static(path.resolve(__dirname, "..") + "/frontend/dist"));
 
-// TODO: CORS
-app.use(cors());
-
-app.get("/test", (req, res) => {
+app.get("/api/test", (req, res) => {
   // 200: OK
   res.status(200).json({message: "Hello from backend"});
 });
