@@ -10,6 +10,10 @@ const PostSchema = new Schema({
   text: {
     type: String,
     required: true
+  },
+  createdDate: {
+    type: Date,
+    required: true
   }
 });
 

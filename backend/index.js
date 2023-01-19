@@ -30,10 +30,16 @@ app.get("/api/test", (req, res) => {
   res.status(200).json({message: "Hello from backend"});
 });
 
+app.get("/api/latest", async (req, res) => {
+  console.log("latest");
+  const results = await PostModel.find().sort({createdDate: -1});
+  console.dir(results);
+  res.status(200).json(results);
+});
+
 app.post("/api/post", async (req, res) => {
   const {title, text} = req.body;
-  //console.dir(req.body)
-  await PostModel.create({title, text});
+  await PostModel.create({title, text, createdDate: new Date()});
   res.status(200).json({message: "new post created"});
 });
 

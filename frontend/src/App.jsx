@@ -26,7 +26,7 @@ function App() {
         <Header />
         <Routes>
           <Route path="/" element={<Home />}></Route>
-          <Route path="/new" element={<Latest />}></Route>
+          <Route path="/latest" element={<Latest />}></Route>
           <Route path="/search" element={<Search />}></Route>
           <Route path="/post" element={<PostForm />}></Route>
         </Routes>
