@@ -11,18 +11,25 @@ import PostForm from "./components/PostForm";
 function App() {
   const [message, setMessage] = useState("");
 
-  const handleClick = () => {
-    fetch("/api/test")
+  const handleHelloClick = () => {
+    fetch("/api/hello")
     .then(res => res.json())
     .then(data => {
-      //console.log(data.message);
       setMessage(data.message);
     });
   };
 
+  const handleLoadClick = () => {
+    fetch("api/load-testdata")
+    .then(res => res.json())
+    .then(data => console.log(data.message))
+    .catch(err => console.error(err));
+  }
+
   return (
     <div className="App">
       <BrowserRouter>
+        <button onClick={handleLoadClick}>Load Test Data</button>
         <Header />
         <Routes>
           <Route path="/" element={<Home />}></Route>
@@ -31,7 +38,7 @@ function App() {
           <Route path="/post" element={<PostForm />}></Route>
         </Routes>
         <p>Message from backend: {message}</p>
-        <button onClick={handleClick}>Click me</button>
+        <button onClick={handleHelloClick}>Hello</button>
         <Footer />
       </BrowserRouter>
     </div>

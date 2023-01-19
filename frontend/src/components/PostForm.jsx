@@ -2,6 +2,7 @@ import {useState} from "react";
 
 function PostForm() {
   const [title, setTitle] = useState("");
+  const [lead, setLead] = useState("");
   const [text, setText] = useState("");
   const [validationMessage, setValidationMessage] = useState("");
 
@@ -11,6 +12,10 @@ function PostForm() {
     setTitle(event.target.value);
   };
 
+  const handleLeadChange = (event) => {
+    setLead(event.target.value);
+  };
+  
   const handleTextChange = (event) => {
     setText(event.target.value);
   };
@@ -36,11 +41,12 @@ function PostForm() {
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({title, text})
+      body: JSON.stringify({title, lead, text})
     })
     .then(res => res.json())
     .then(data => {
       setTitle("");
+      setLead("");
       setText("");
       setValidationMessage(data.message);
     })
@@ -52,6 +58,8 @@ function PostForm() {
       <p>{validationMessage}</p>
       <label htmlFor="title">Title</label>
       <input id="title" required type="text" value={title} onChange={handleTitleChange} />
+      <label htmlFor="lead">Lead</label>
+      <input id="lead" required type="text" value={lead} onChange={handleLeadChange} />
       <label htmlFor="content">Content</label>
       <input id="content" required type="textarea" value={text} onChange={handleTextChange} />
       <button type="submit" onClick={handleSubmitClick}>Submit</button>

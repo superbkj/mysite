@@ -25,22 +25,45 @@ app.use(express.json());
 // In production, serve frontend from dist folder
 app.use(express.static(path.resolve(__dirname, "..") + "/frontend/dist"));
 
-app.get("/api/test", (req, res) => {
+app.get("/api/hello", (req, res) => {
   // 200: OK
   res.status(200).json({message: "Hello from backend"});
 });
 
 app.get("/api/latest", async (req, res) => {
-  console.log("latest");
   const results = await PostModel.find().sort({createdDate: -1});
-  console.dir(results);
   res.status(200).json(results);
 });
 
 app.post("/api/post", async (req, res) => {
-  const {title, text} = req.body;
-  await PostModel.create({title, text, createdDate: new Date()});
+  const {title, lead, text} = req.body;
+  await PostModel.create({title, lead, text, createdDate: new Date()});
   res.status(200).json({message: "new post created"});
+});
+
+const sleep = (ms) => {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
+app.get("/api/load-testdata", async (req, res) => {
+  for (let i = 0; i < 3; i++) {
+    for (let j = 1; j <= 10; j++) {
+      const response = await fetch(process.env.LOREM_JPSUM_CONNECTION_URL);
+      const data = await response.json();
+      await PostModel.create({
+        title: `Test Title ${(10 * i) + j}`,
+        lead: data.content.substring(0, 50),
+        text: data.content,
+        createdDate: new Date()
+      });
+    }
+    console.log("waiting 1 sec...");
+    await sleep(1000);
+  }
+  console.log("completed");
+  res.status(200).json({message: "test data loaded"});
 });
 
 app.use((req, res) => {

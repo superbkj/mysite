@@ -7,6 +7,10 @@ const PostSchema = new Schema({
     type: String,
     required: true
   },
+  lead: {
+    type: String,
+    required: true
+  },
   text: {
     type: String,
     required: true
