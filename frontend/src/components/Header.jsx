@@ -15,7 +15,7 @@ function Header() {
           <NavLink to="/search" className={({isActive}) => isActive ? "active" : ""}>Search</NavLink>
         </li>
         <li>
-          <NavLink to="/post" className={({isActive}) => isActive ? "active" : ""}>Post</NavLink>
+          <NavLink to="/make-a-post" className={({isActive}) => isActive ? "active" : ""}>Post</NavLink>
         </li>
       </ul>
     </nav>

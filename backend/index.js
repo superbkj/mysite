@@ -35,7 +35,12 @@ app.get("/api/latest", async (req, res) => {
   res.status(200).json(results);
 });
 
-app.post("/api/post", async (req, res) => {
+app.get("/api/posts/:id", async (req, res) => {
+  const details = await PostModel.findById(req.params.id);
+  res.status(200).json(details);
+});
+
+app.post("/api/make-a-post", async (req, res) => {
   const {title, lead, text} = req.body;
   await PostModel.create({title, lead, text, createdDate: new Date()});
   res.status(200).json({message: "new post created"});
@@ -53,7 +58,7 @@ app.get("/api/load-testdata", async (req, res) => {
       const response = await fetch(process.env.LOREM_JPSUM_CONNECTION_URL);
       const data = await response.json();
       await PostModel.create({
-        title: `Test Title ${(10 * i) + j}`,
+        title: `Test Title ${Math.floor(Math.random() * 300)}`,
         lead: data.content.substring(0, 50),
         text: data.content,
         createdDate: new Date()

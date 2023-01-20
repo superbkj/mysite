@@ -14,7 +14,7 @@ li {
   list-style: none;
 }
 
-a {
+.navbar a {
   display: block;
   text-decoration: none;
   color: white;
@@ -23,4 +23,8 @@ a {
 
 .active {
   font-weight: bold;
+}
+
+.post-container {
+  border: solid;
 }

@@ -7,6 +7,7 @@ import Home from "./components/Home";
 import Latest from "./components/Latest";
 import Search from "./components/Search";
 import PostForm from "./components/PostForm";
+import PostDetails from "./components/PostDetails";
 
 function App() {
   const [message, setMessage] = useState("");
@@ -35,7 +36,8 @@ function App() {
           <Route path="/" element={<Home />}></Route>
           <Route path="/latest" element={<Latest />}></Route>
           <Route path="/search" element={<Search />}></Route>
-          <Route path="/post" element={<PostForm />}></Route>
+          <Route path="/make-a-post" element={<PostForm />}></Route>
+          <Route path="/posts/:id" element={<PostDetails />}></Route>
         </Routes>
         <p>Message from backend: {message}</p>
         <button onClick={handleHelloClick}>Hello</button>

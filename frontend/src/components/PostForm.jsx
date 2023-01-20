@@ -36,7 +36,7 @@ function PostForm() {
     // Slash at the start of a path
     // ensures that the path is not relative
     // but read from the root of the site
-    fetch("/api/post", {
+    fetch("/api/make-a-post", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
