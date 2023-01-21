@@ -46,6 +46,46 @@ app.post("/api/make-a-post", async (req, res) => {
   res.status(200).json({message: "new post created"});
 });
 
+app.post("/api/search", async (req, res) => {
+  let query = {};
+  const {keywords} = req.body.userQuery;
+  const keywordsArr = keywords.trim().replaceAll("　", " ").replace(/  +/g, " ").split(" ");
+
+  if (keywords) {
+    let titleRegex = "(";
+    let leadRegex = "(";
+    let textRegex = "(";
+
+    keywordsArr.forEach((keyword, index) => {
+      if (index > 0) {
+        titleRegex += "|";
+        leadRegex += "|";
+        textRegex += "|";
+      }
+      titleRegex += keyword;
+      leadRegex += keyword;
+      textRegex += keyword;
+    });
+
+    titleRegex += ")";
+    leadRegex += ")";
+    textRegex += ")";
+
+    query = {
+      $or: [
+        {title: new RegExp(titleRegex, "i")},
+        {lead: new RegExp(leadRegex, "i")},
+        {text: new RegExp(textRegex, "i")}
+      ]
+    }
+  }
+
+  console.dir(query);
+
+  const results = await PostModel.find(query);
+  res.status(200).json(results);
+});
+
 const sleep = (ms) => {
   return new Promise((resolve) => {
     setTimeout(resolve, ms);
