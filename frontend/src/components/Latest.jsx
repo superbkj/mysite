@@ -1,9 +1,8 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 
-import PostList from "./PostList";
+import PostList from './PostList';
 
 function Latest() {
-
   const [results, setResults] = useState([]);
 
   // Callback function passed to useEffect
@@ -15,14 +14,14 @@ function Latest() {
   // define & call an async function inside of it.
   useEffect(() => {
     (async () => {
-      fetch("api/latest")
-      .then(res => res.json())
-      .then(data => setResults(data));
+      fetch('api/latest')
+        .then((res) => res.json())
+        .then((data) => setResults(data));
     })(); // IIFE (Immediately Invoked Function Expression)
   }, []);
 
   if (!results) {
-    return <p>Loading...</p>
+    return <p>Loading...</p>;
   }
 
   return (

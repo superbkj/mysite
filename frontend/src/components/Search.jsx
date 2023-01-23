@@ -1,14 +1,15 @@
-import { useState } from "react";
-import PostList from "./PostList";
+import React, { useState } from 'react';
+import PostList from './PostList';
+
+import { error, obj } from '../utils/logger';
 
 function Search() {
   const [results, setResults] = useState();
-  const [keywords, setKeywords] = useState("");
+  const [keywords, setKeywords] = useState('');
 
   const handleKeywordsChange = (event) => {
     setKeywords(event.target.value);
   };
-
 
   const handleSearchClick = (event) => {
     event.preventDefault();
@@ -16,30 +17,32 @@ function Search() {
     const userQuery = {};
     userQuery.keywords = keywords;
 
-    console.dir(userQuery);
+    obj(userQuery);
 
-    fetch("/api/search", {
-      method: "POST",
+    fetch('/api/search', {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json"
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify({userQuery})
+      body: JSON.stringify({ userQuery }),
     })
-    .then(res => res.json())
-    .then(data => {
-      setResults(data);
-    })
-    .catch(error => console.error(error));
+      .then((res) => res.json())
+      .then((data) => {
+        setResults(data);
+      })
+      .catch((err) => error(err));
   };
 
   return (
     <>
       <form>
-        <label htmlFor="keywords">Keywords</label>
-        <input id="keywords" required type="text" value={keywords} onChange={handleKeywordsChange} />
+        <label htmlFor="keywords">
+          Keywords
+          <input id="keywords" required type="text" value={keywords} onChange={handleKeywordsChange} />
+        </label>
         <button type="submit" onClick={handleSearchClick}>Search</button>
       </form>
-      {results && <PostList posts={results}/>}
+      {results && <PostList posts={results} />}
     </>
   );
 }

@@ -1,12 +1,13 @@
-import Post from "./Post";
+import React from 'react';
+
+import Post from './Post';
 
 function PostList(props) {
-  const {posts} = props;
+  const { posts } = props;
 
   return (
-    posts.map(post => {
-      return <li key={post._id}><Post post={post} /></li>
-    })
+    // eslint-disable-next-line no-underscore-dangle
+    posts.map((post) => <li key={post._id}><Post post={post} /></li>)
   );
 }
 
