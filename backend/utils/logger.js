@@ -1,13 +1,19 @@
 const info = (...params) => {
-  console.log(...params);
+  if (process.env.NODE_ENV !== 'test') {
+    console.log(...params);
+  }
 };
 
 const error = (...params) => {
-  console.error(...params);
+  if (process.env.NODE_ENV !== 'test') {
+    console.error(...params);
+  }
 };
 
 const obj = (object) => {
-  console.dir(object);
+  if (process.env.NODE_ENV !== 'test') {
+    console.dir(object);
+  }
 };
 
 module.exports = { info, error, obj };
