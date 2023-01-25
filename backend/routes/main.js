@@ -40,6 +40,23 @@ router.post('/api/search', asyncWrapper(async (req, res) => {
   const keywordsArr = keywords.trim().replaceAll('　', ' ').replace(/  +/g, ' ').split(' ');
 
   if (keywords) {
+    let regexStr = '^';
+
+    keywordsArr.forEach((keyword) => {
+      regexStr += `(?=.*${keyword})`;
+    });
+
+    query = {
+      $or: [
+        // i for ignoreCase
+        { title: new RegExp(regexStr, 'i') },
+        { lead: new RegExp(regexStr, 'i') },
+        { text: new RegExp(regexStr, 'i') },
+      ],
+    };
+  }
+  /*
+  if (keywords) {
     let titleRegex = '(';
     let leadRegex = '(';
     let textRegex = '(';
@@ -68,6 +85,7 @@ router.post('/api/search', asyncWrapper(async (req, res) => {
       ],
     };
   }
+  */
 
   obj(query);
 
