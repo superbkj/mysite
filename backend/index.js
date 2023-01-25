@@ -35,9 +35,20 @@ app.use((req, res) => {
   res.status(404).send('<h1>Page not found</h1>');
 });
 
-app.use((err, req, res) => {
+// your error handler middleware MUST have 4 parameters:
+// error, req, res, next. Otherwise your handler won't fire
+
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, next) => {
+  if (err.name === 'CastError') {
+    // 400: Bad Request
+    res.status(400).send({ error: 'malformatted id' });
+  } else if (err.name === 'ValidationError') {
+    res.status(400).send({ error: err });
+  } else {
   // 500: Internal server error
-  res.status(500).send('<h1>Something went wrong</h1>');
+    res.status(err.status || 500).send('<h1>Something went wrong</h1>');
+  }
 });
 
 app.listen(config.PORT, () => {

@@ -3,35 +3,40 @@ const express = require('express');
 const PostModel = require('../models/postModel');
 
 const { info, obj } = require('../utils/logger');
+const asyncWrapper = require('../utils/asyncWrapper');
 
 const router = express.Router();
 
+// Sets the correct content-type (application/json ?)
+// Sends JSON string converted from object using JSON.stringify().
 router.get('/api/hello', (req, res) => {
   // 200: OK
   res.status(200).json({ message: 'Hello from backend' });
 });
 
-router.get('/api/latest', async (req, res) => {
+router.get('/api/latest', asyncWrapper(async (req, res) => {
   const results = await PostModel.find().sort({ createdDate: -1 });
   res.status(200).json(results);
-});
+}));
 
-router.get('/api/posts/:id', async (req, res) => {
+router.get('/api/posts/:id', asyncWrapper(async (req, res) => {
   const details = await PostModel.findById(req.params.id);
-  res.status(200).json(details);
-});
+  if (details) res.status(200).json(details);
+  else res.status(404).json({});
+}));
 
-router.post('/api/make-a-post', async (req, res) => {
+router.post('/api/make-a-post', asyncWrapper(async (req, res) => {
   const { title, lead, text } = req.body;
   await PostModel.create({
     title, lead, text, createdDate: new Date(),
   });
-  res.status(200).json({ message: 'new post created' });
-});
+  // 201: Created
+  res.status(201).json({ message: 'new post created' });
+}));
 
-router.post('/api/search', async (req, res) => {
+router.post('/api/search', asyncWrapper(async (req, res) => {
   let query = {};
-  const { keywords } = req.body.userQuery;
+  const { keywords } = req.body;
   const keywordsArr = keywords.trim().replaceAll('　', ' ').replace(/  +/g, ' ').split(' ');
 
   if (keywords) {
@@ -56,6 +61,7 @@ router.post('/api/search', async (req, res) => {
 
     query = {
       $or: [
+        // i for ignoreCase
         { title: new RegExp(titleRegex, 'i') },
         { lead: new RegExp(leadRegex, 'i') },
         { text: new RegExp(textRegex, 'i') },
@@ -67,7 +73,7 @@ router.post('/api/search', async (req, res) => {
 
   const results = await PostModel.find(query);
   res.status(200).json(results);
-});
+}));
 
 const sleep = (ms) => new Promise(
   (resolve) => {
@@ -75,7 +81,7 @@ const sleep = (ms) => new Promise(
   },
 );
 
-router.get('/api/load-testdata', async (req, res) => {
+router.get('/api/load-testdata', asyncWrapper(async (req, res) => {
   for (let i = 0; i < 3; i += 1) {
     for (let j = 1; j <= 10; j += 1) {
       // eslint-disable-next-line no-await-in-loop
@@ -96,6 +102,6 @@ router.get('/api/load-testdata', async (req, res) => {
   }
   info('completed');
   res.status(200).json({ message: 'test data loaded' });
-});
+}));
 
 module.exports = router;

@@ -24,7 +24,7 @@ function Search() {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ userQuery }),
+      body: JSON.stringify(userQuery),
     })
       .then((res) => res.json())
       .then((data) => {
