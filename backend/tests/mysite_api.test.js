@@ -9,7 +9,7 @@ const mongoose = require('mongoose');
 // eslint-disable-next-line import/no-extraneous-dependencies
 const supertest = require('supertest');
 const helper = require('./test_helper');
-const app = require('../index');
+const app = require('../app');
 
 const api = supertest(app);
 
@@ -34,7 +34,7 @@ beforeEach(async () => {
 // One is the method provided by supertest ?
 // Another is the method provided by Jest ?
 
-describe('Check for initial posts', () => {
+describe('Regarding initial posts', () => {
   test('posts are returned as json', async () => {
     await api
       .get('/api/hello')
@@ -56,8 +56,8 @@ describe('Check for initial posts', () => {
   });
 });
 
-describe('Check for post addition', () => {
-  test('an invalid post cannot be added', async () => {
+describe('Adding a post', () => {
+  test('fails with an invalid input', async () => {
     const newPost = {
       title: 'I have only title',
     };
@@ -72,7 +72,7 @@ describe('Check for post addition', () => {
     expect(postsAtEnd).toHaveLength(helper.initialPosts.length);
   });
 
-  test('a valid post can be added', async () => {
+  test('succeeds with valid input', async () => {
     const newPost = {
       title: 'NEW POST',
       lead: 'This is a new post',
@@ -94,7 +94,7 @@ describe('Check for post addition', () => {
   });
 });
 
-describe('Check for post search', () => {
+describe('When searching posts', () => {
   test('a specific post can be searched and found', async () => {
     const userQuery = { keywords: 'initial post' };
     const response = await api.post('/api/search')

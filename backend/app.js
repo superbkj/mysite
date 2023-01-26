@@ -3,22 +3,11 @@ require('dotenv').config();
 
 const express = require('express');
 const path = require('path');
-const mongoose = require('mongoose');
-
-const config = require('./utils/config');
 
 const routes = require('./routes/main');
+const connectMongo = require('./utils/connectMongo');
 
-const { info, error } = require('./utils/logger');
-
-mongoose.connect(config.MONGODB_URI);
-mongoose.connection.on('error', (err) => {
-  error(err);
-  process.exit(1);
-});
-mongoose.connection.on('connected', () => {
-  info('Connected to mongo');
-});
+connectMongo();
 
 const app = express();
 
@@ -49,10 +38,6 @@ app.use((err, req, res, next) => {
   // 500: Internal server error
     res.status(err.status || 500).send('<h1>Something went wrong</h1>');
   }
-});
-
-app.listen(config.PORT, () => {
-  info(`Server running on port ${config.PORT}`);
 });
 
 module.exports = app;

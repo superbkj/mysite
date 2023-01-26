@@ -1,12 +1,16 @@
 const express = require('express');
+// eslint-disable-next-line import/no-extraneous-dependencies
+const bcrypt = require('bcrypt');
 
 const PostModel = require('../models/postModel');
+const UserModel = require('../models/userModel');
 
 const { info, obj } = require('../utils/logger');
 const asyncWrapper = require('../utils/asyncWrapper');
 
 const router = express.Router();
 
+// json():
 // Sets the correct content-type (application/json ?)
 // Sends JSON string converted from object using JSON.stringify().
 router.get('/api/hello', (req, res) => {
@@ -55,42 +59,26 @@ router.post('/api/search', asyncWrapper(async (req, res) => {
       ],
     };
   }
-  /*
-  if (keywords) {
-    let titleRegex = '(';
-    let leadRegex = '(';
-    let textRegex = '(';
-
-    keywordsArr.forEach((keyword, index) => {
-      if (index > 0) {
-        titleRegex += '|';
-        leadRegex += '|';
-        textRegex += '|';
-      }
-      titleRegex += keyword;
-      leadRegex += keyword;
-      textRegex += keyword;
-    });
-
-    titleRegex += ')';
-    leadRegex += ')';
-    textRegex += ')';
-
-    query = {
-      $or: [
-        // i for ignoreCase
-        { title: new RegExp(titleRegex, 'i') },
-        { lead: new RegExp(leadRegex, 'i') },
-        { text: new RegExp(textRegex, 'i') },
-      ],
-    };
-  }
-  */
 
   obj(query);
 
   const results = await PostModel.find(query);
   res.status(200).json(results);
+}));
+
+router.post('/api/user-registration', asyncWrapper(async (req, res) => {
+  const { username, email, password } = req.body;
+
+  // the module will go through a series of rounds to give you a secure hash.
+  // The value you submit is not just the number of
+  // rounds the module will go through to hash your data.
+  // The module will go through 2^rounds hashing iterations.
+  const saltRounds = 10;
+  const passwordHash = await bcrypt.hash(password, saltRounds);
+
+  await UserModel.create({ username, email, passwordHash });
+
+  res.status(201).json({ message: 'new user created' });
 }));
 
 const sleep = (ms) => new Promise(
