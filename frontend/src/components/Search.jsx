@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import PostList from './PostList';
 
-import { error, obj } from '../utils/logger';
+import { error } from '../utils/logger';
 
 function Search() {
   const [results, setResults] = useState();
@@ -14,18 +14,12 @@ function Search() {
   const handleSearchClick = (event) => {
     event.preventDefault();
 
-    const userQuery = {};
-    userQuery.keywords = keywords;
+    const params = {};
+    params.keywords = keywords;
 
-    obj(userQuery);
+    const paramsURLStr = new URLSearchParams(params).toString();
 
-    fetch('/api/search', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(userQuery),
-    })
+    fetch(`/api/posts?${paramsURLStr}`)
       .then((res) => res.json())
       .then((data) => {
         setResults(data);

@@ -8,12 +8,16 @@ const mongoose = require('mongoose');
 
 // eslint-disable-next-line import/no-extraneous-dependencies
 const supertest = require('supertest');
+// eslint-disable-next-line import/no-extraneous-dependencies
+const bcrypt = require('bcrypt');
+
 const helper = require('./test_helper');
 const app = require('../app');
 
 const api = supertest(app);
 
 const PostModel = require('../models/postModel');
+const UserModel = require('../models/userModel');
 
 beforeEach(async () => {
   await PostModel.deleteMany({});
@@ -28,6 +32,11 @@ beforeEach(async () => {
   // into a single promise, that will be fulfilled
   // once every promise in the array passed to it as a parameter is resolved
   await Promise.all(promiseArray);
+
+  await UserModel.deleteMany({});
+  const passwordHash = await bcrypt.hash('test1pass', 10);
+  const user = new UserModel({ username: 'testuser1', email: 'test1@test.com', passwordHash });
+  await user.save();
 });
 
 // There are two types of expect() ?
@@ -145,11 +154,62 @@ describe('Viewing a specific post', () => {
       .get(`/api/posts/${invalidId}`)
       .expect(400);
   });
+
+  /* Test for post removing
+  test();
+  */
 });
 
-/* Test for removing
-test();
+/*
+describe('Regarding initial users', () => {
+  //
+});
 */
+
+describe('Creation of users', () => {
+  test('succeeds with valid input', async () => {
+    const usersAtStart = await helper.usersInDb();
+
+    const newUser = {
+      username: 'testuser2',
+      email: 'test2@test.com',
+      password: 'test2pass',
+    };
+
+    await api
+      .post('/api/user-registration')
+      .send(newUser)
+      .expect(201)
+      .expect('Content-Type', /application\/json/);
+
+    const usersAtEnd = await helper.usersInDb();
+    expect(usersAtEnd).toHaveLength(usersAtStart.length + 1);
+
+    const usernames = usersAtEnd.map((u) => u.username);
+    expect(usernames).toContain(newUser.username);
+  });
+
+  test('fails with duplicate email', async () => {
+    const usersAtStart = await helper.usersInDb();
+
+    const newUser = {
+      username: 'abc',
+      email: 'test1@test.com',
+      password: 'abc',
+    };
+
+    const result = await api
+      .post('/api/user-registration')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/);
+
+    expect(result.body.error).toContain('expected "email" to be unique');
+
+    const usersAtEnd = await helper.usersInDb();
+    expect(usersAtEnd).toEqual(usersAtStart);
+  });
+});
 
 afterAll(async () => {
   await mongoose.connection.close();

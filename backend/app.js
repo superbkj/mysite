@@ -4,7 +4,8 @@ require('dotenv').config();
 const express = require('express');
 const path = require('path');
 
-const routes = require('./routes/main');
+const postRoutes = require('./routes/postRoutes');
+const userRoutes = require('./routes/userRoutes');
 const connectMongo = require('./utils/connectMongo');
 
 connectMongo();
@@ -17,7 +18,13 @@ app.use(express.json());
 // In production, serve frontend from dist folder
 app.use(express.static(`${path.resolve(__dirname, '..')}/frontend/dist`));
 
-app.use('/', routes);
+app.get('/api/hello', (req, res) => {
+  // 200: OK
+  res.status(200).json({ message: 'Hello from backend' });
+});
+
+app.use('/api/posts', postRoutes);
+app.use('/api/users', userRoutes);
 
 app.use((req, res) => {
   // 404: Not found

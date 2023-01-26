@@ -14,7 +14,7 @@ function Latest() {
   // define & call an async function inside of it.
   useEffect(() => {
     (async () => {
-      fetch('api/latest')
+      fetch('/api/posts')
         .then((res) => res.json())
         .then((data) => setResults(data));
     })(); // IIFE (Immediately Invoked Function Expression)

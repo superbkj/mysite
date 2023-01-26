@@ -22,7 +22,7 @@ function App() {
   };
 
   const handleLoadClick = () => {
-    fetch('api/load-testdata')
+    fetch('/api/posts/test/load-testdata')
       .then((res) => res.json())
       .then((data) => info(data.message))
       .catch((err) => error(err));

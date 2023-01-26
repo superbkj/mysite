@@ -1,4 +1,5 @@
 const PostModel = require('../models/postModel');
+const UserModel = require('../models/userModel');
 
 const initialPosts = [
   {
@@ -34,6 +35,11 @@ const postsInDb = async () => {
   return posts;
 };
 
+const usersInDb = async () => {
+  const users = await UserModel.find({});
+  return users;
+};
+
 module.exports = {
-  initialPosts, nonExistingId, postsInDb,
+  initialPosts, nonExistingId, postsInDb, usersInDb,
 };
