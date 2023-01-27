@@ -40,10 +40,12 @@ app.use((err, req, res, next) => {
     // 400: Bad Request
     res.status(400).send({ error: 'malformatted id' });
   } else if (err.name === 'ValidationError') {
+    // console.log('validation');
     res.status(400).send({ error: err });
   } else {
-  // 500: Internal server error
-    res.status(err.status || 500).send('<h1>Something went wrong</h1>');
+    console.log('other');
+    // 500: Internal server error
+    res.status(err.status || 500).send(`<h1>Something went wrong</h1><p>${err}</p>`);
   }
 });
 

@@ -22,6 +22,7 @@ function PostDetails() {
     <>
       <h2>{details.title}</h2>
       <p>{details.lead}</p>
+      <p>{details.user.username}</p>
       <p>{details.text}</p>
       <p>{details.createdDate}</p>
     </>

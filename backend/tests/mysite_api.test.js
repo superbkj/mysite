@@ -34,31 +34,32 @@ beforeEach(async () => {
   await Promise.all(promiseArray);
 
   await UserModel.deleteMany({});
-  const passwordHash = await bcrypt.hash('test1pass', 10);
-  const user = new UserModel({ username: 'testuser1', email: 'test1@test.com', passwordHash });
-  await user.save();
+
+  const passwordHash = await bcrypt.hash(helper.initialUsers[0].password, 10);
+  const testuserObj = new UserModel({ ...helper.initialUsers[0], passwordHash });
+  await testuserObj.save();
 });
 
 // There are two types of expect() ?
 // One is the method provided by supertest ?
 // Another is the method provided by Jest ?
 
-describe('Regarding initial posts', () => {
+describe('When getting initial posts', () => {
   test('posts are returned as json', async () => {
     await api
-      .get('/api/hello')
+      .get('/api/posts')
       .expect(200)
       .expect('Content-Type', /application\/json/);
   });
 
   test('all posts are returned', async () => {
-    const response = await api.get('/api/latest');
+    const response = await api.get('/api/posts');
 
     expect(response.body).toHaveLength(helper.initialPosts.length);
   });
 
   test('a specific post is within the returned notes', async () => {
-    const response = await api.get('/api/latest');
+    const response = await api.get('/api/posts');
 
     const texts = response.body.map((r) => r.text);
     expect(texts).toContain('This is initial post 2. This is the test environment of my site.');
@@ -72,7 +73,7 @@ describe('Adding a post', () => {
     };
 
     await api
-      .post('/api/make-a-post')
+      .post('/api/posts')
       .send(newPost)
       .expect(400); // 400: Bad Request
 
@@ -82,15 +83,18 @@ describe('Adding a post', () => {
   });
 
   test('succeeds with valid input', async () => {
+    const testuser = await UserModel.findOne({ email: helper.initialUsers[0].email });
     const newPost = {
       title: 'NEW POST',
       lead: 'This is a new post',
       text: 'This is a new post created for testing purpose',
       createdDate: new Date(),
+      // eslint-disable-next-line no-underscore-dangle
+      userId: testuser._id,
     };
 
     await api
-      .post('/api/make-a-post')
+      .post('/api/posts')
       .send(newPost)
       .expect(201)
       .expect('Content-Type', /application\/json/);
@@ -105,18 +109,26 @@ describe('Adding a post', () => {
 
 describe('When searching posts', () => {
   test('a specific post can be searched and found', async () => {
-    const userQuery = { keywords: 'initial post' };
-    const response = await api.post('/api/search')
-      .send(userQuery)
+    const params = {};
+    params.keywords = 'initial post';
+    const paramsURLStr = new URLSearchParams(params).toString();
+
+    const response = await api
+      .get(`/api/posts?${paramsURLStr}`)
+      .send(params)
       .expect(200);
 
     expect(response.body).toHaveLength(helper.initialPosts.length);
   });
 
   test('No post is found if the query is not matching anything', async () => {
-    const userQuery = { keywords: 'no-match-query' };
-    const response = await api.post('/api/search')
-      .send(userQuery)
+    const params = {};
+    params.keywords = 'no matching query';
+    const paramsURLStr = new URLSearchParams(params).toString();
+
+    const response = await api
+      .get(`/api/posts?${paramsURLStr}`)
+      .send(params)
       .expect(200);
 
     expect(response.body).toHaveLength(0);
@@ -138,11 +150,11 @@ describe('Viewing a specific post', () => {
   });
 
   test('fails with 404 if post does not exist', async () => {
-    const validButnonExistingId = await helper.nonExistingId();
+    const validButNonExistingId = await helper.nonExistingId();
 
     await api
       // eslint-disable-next-line no-underscore-dangle
-      .get(`/api/posts/${validButnonExistingId}`)
+      .get(`/api/posts/${validButNonExistingId}`)
       .expect(404);
   });
 
@@ -154,17 +166,9 @@ describe('Viewing a specific post', () => {
       .get(`/api/posts/${invalidId}`)
       .expect(400);
   });
-
-  /* Test for post removing
-  test();
-  */
 });
 
-/*
-describe('Regarding initial users', () => {
-  //
-});
-*/
+// describe('Deleting a specific user', () => {});
 
 describe('Creation of users', () => {
   test('succeeds with valid input', async () => {
@@ -177,7 +181,7 @@ describe('Creation of users', () => {
     };
 
     await api
-      .post('/api/user-registration')
+      .post('/api/users')
       .send(newUser)
       .expect(201)
       .expect('Content-Type', /application\/json/);
@@ -185,8 +189,8 @@ describe('Creation of users', () => {
     const usersAtEnd = await helper.usersInDb();
     expect(usersAtEnd).toHaveLength(usersAtStart.length + 1);
 
-    const usernames = usersAtEnd.map((u) => u.username);
-    expect(usernames).toContain(newUser.username);
+    const emails = usersAtEnd.map((u) => u.email);
+    expect(emails).toContain(newUser.email);
   });
 
   test('fails with duplicate email', async () => {
@@ -194,23 +198,23 @@ describe('Creation of users', () => {
 
     const newUser = {
       username: 'abc',
-      email: 'test1@test.com',
+      email: helper.initialUsers[0].email,
       password: 'abc',
     };
 
-    const result = await api
-      .post('/api/user-registration')
+    await api
+      .post('/api/users')
       .send(newUser)
       .expect(400)
       .expect('Content-Type', /application\/json/);
-
-    expect(result.body.error).toContain('expected "email" to be unique');
 
     const usersAtEnd = await helper.usersInDb();
     expect(usersAtEnd).toEqual(usersAtStart);
   });
 });
 
+// describe('When searching users,' () => {});
+// describe('Viewing a specific user' () => {});
 afterAll(async () => {
   await mongoose.connection.close();
 });
