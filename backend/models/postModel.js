@@ -9,7 +9,6 @@ const PostSchema = new Schema({
   },
   lead: {
     type: String,
-    required: true,
   },
   text: {
     type: String,
@@ -22,8 +21,28 @@ const PostSchema = new Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'user',
-    // required: true,
+    required: true,
   },
+  merged: {
+    type: String,
+    required: true,
+  },
+});
+
+// Use pre('validate') instead of pre('save')
+// to set the value for the required field.
+// Mongoose validates documents before saving.
+PostSchema.pre('validate', function (next) {
+  // In below case, 'this' will be
+  // current file if inside arrow function, which is not expected
+  // caller object (post instance) if inside 'function' function, which is expected
+  const post = this;
+  const merged = `${post.title}${post.lead}${post.text}`;
+  post.merged = merged;
+  // the next() call does not stop the rest
+  // of the code in your middleware function from executing
+  // unless you 'return' it
+  return next();
 });
 
 const PostModel = mongoose.model('post', PostSchema);

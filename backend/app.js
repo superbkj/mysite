@@ -43,7 +43,6 @@ app.use((err, req, res, next) => {
     // console.log('validation');
     res.status(400).send({ error: err });
   } else {
-    console.log('other');
     // 500: Internal server error
     res.status(err.status || 500).send(`<h1>Something went wrong</h1><p>${err}</p>`);
   }

@@ -20,10 +20,17 @@ const PostModel = require('../models/postModel');
 const UserModel = require('../models/userModel');
 
 beforeEach(async () => {
+  await UserModel.deleteMany({});
+
+  const passwordHash = await bcrypt.hash(helper.initialUsers[0].password, 10);
+  const testuserObj = new UserModel({ ...helper.initialUsers[0], passwordHash });
+  await testuserObj.save();
+
   await PostModel.deleteMany({});
 
   const promiseArray = helper.initialPosts.map((post) => {
-    const postObj = new PostModel(post);
+    // eslint-disable-next-line no-underscore-dangle
+    const postObj = new PostModel({ ...post, user: testuserObj._id });
     return postObj.save();
   });
 
@@ -32,12 +39,6 @@ beforeEach(async () => {
   // into a single promise, that will be fulfilled
   // once every promise in the array passed to it as a parameter is resolved
   await Promise.all(promiseArray);
-
-  await UserModel.deleteMany({});
-
-  const passwordHash = await bcrypt.hash(helper.initialUsers[0].password, 10);
-  const testuserObj = new UserModel({ ...helper.initialUsers[0], passwordHash });
-  await testuserObj.save();
 });
 
 // There are two types of expect() ?
@@ -83,14 +84,14 @@ describe('Adding a post', () => {
   });
 
   test('succeeds with valid input', async () => {
-    const testuser = await UserModel.findOne({ email: helper.initialUsers[0].email });
+    const user = await UserModel.findOne({});
     const newPost = {
       title: 'NEW POST',
-      lead: 'This is a new post',
+      // lead: 'This is a new post',
       text: 'This is a new post created for testing purpose',
       createdDate: new Date(),
       // eslint-disable-next-line no-underscore-dangle
-      userId: testuser._id,
+      userId: user._id,
     };
 
     await api
@@ -110,7 +111,7 @@ describe('Adding a post', () => {
 describe('When searching posts', () => {
   test('a specific post can be searched and found', async () => {
     const params = {};
-    params.keywords = 'initial post';
+    params.keywords = 'Apple Grape Orange';
     const paramsURLStr = new URLSearchParams(params).toString();
 
     const response = await api
@@ -118,12 +119,12 @@ describe('When searching posts', () => {
       .send(params)
       .expect(200);
 
-    expect(response.body).toHaveLength(helper.initialPosts.length);
+    expect(response.body).toHaveLength(1);
   });
 
   test('No post is found if the query is not matching anything', async () => {
     const params = {};
-    params.keywords = 'no matching query';
+    params.keywords = 'Apple Grape Lemon';
     const paramsURLStr = new URLSearchParams(params).toString();
 
     const response = await api

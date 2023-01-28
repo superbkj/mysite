@@ -17,19 +17,22 @@ router.get('/', asyncWrapper(async (req, res) => {
     const keywordsArr = keywords.trim().replaceAll('　', ' ').replace(/  +/g, ' ').split(' ');
     let regexStr = '^';
 
+    // Positive lookahead
     keywordsArr.forEach((keyword) => {
       regexStr += `(?=.*${keyword})`;
     });
 
-    // すべてのkeywordsが(title + lead + text)に含まれるように修正
     // user名もキーワード検索に含まれるよう修正
     mongoQuery = {
+      merged: new RegExp(regexStr, 'i'),
+      /*
       $or: [
         // i for ignoreCase
         { title: new RegExp(regexStr, 'i') },
         { lead: new RegExp(regexStr, 'i') },
         { text: new RegExp(regexStr, 'i') },
       ],
+      */
     };
   }
 
@@ -60,12 +63,15 @@ router.get('/:id', asyncWrapper(async (req, res) => {
 
 router.post('/', asyncWrapper(async (req, res) => {
   const {
-    title, lead, text, userId,
+    title,
+    lead,
+    text,
+    userId,
   } = req.body;
 
-  // console.log('userid', userId);
-
-  const user = await UserModel.findById(userId);
+  // const user = await UserModel.findById(userId);
+  // 今だけ
+  const user = await UserModel.findOne({});
 
   const post = PostModel({
     title,
@@ -77,6 +83,7 @@ router.post('/', asyncWrapper(async (req, res) => {
   });
 
   const savedPost = await post.save();
+
   // eslint-disable-next-line no-underscore-dangle
   user.posts = user.posts.concat(savedPost._id);
   await user.save();
