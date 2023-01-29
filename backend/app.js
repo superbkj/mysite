@@ -6,6 +6,7 @@ const path = require('path');
 
 const postRoutes = require('./routes/postRoutes');
 const userRoutes = require('./routes/userRoutes');
+const loginRoutes = require('./routes/loginRoutes');
 const connectMongo = require('./utils/connectMongo');
 
 connectMongo();
@@ -25,6 +26,7 @@ app.get('/api/hello', (req, res) => {
 
 app.use('/api/posts', postRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/login', loginRoutes);
 
 app.use((req, res) => {
   // 404: Not found
@@ -40,8 +42,11 @@ app.use((err, req, res, next) => {
     // 400: Bad Request
     res.status(400).send({ error: 'malformatted id' });
   } else if (err.name === 'ValidationError') {
-    // console.log('validation');
     res.status(400).send({ error: err });
+  } else if (err.name === 'JsonWebTokenError') {
+    res.status(401).send({ error: 'token missing or invalid' });
+  } else if (err.name === 'TokenExpiredError') {
+    res.status(401).send({ error: 'token expired' });
   } else {
     // 500: Internal server error
     res.status(err.status || 500).send(`<h1>Something went wrong</h1><p>${err}</p>`);
