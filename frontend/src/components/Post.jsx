@@ -13,7 +13,7 @@ function Post(props) {
         <h2>{post.title}</h2>
       </Link>
       <p>{post.lead}</p>
-      <p>{post.user.username}</p>
+      <p>{post.username}</p>
       <p>{post.createdDate}</p>
     </div>
   );
@@ -24,10 +24,7 @@ Post.propTypes = {
     _id: PropTypes.string,
     title: PropTypes.string,
     lead: PropTypes.string,
-    user: PropTypes.shape({
-      username: PropTypes.string,
-      _id: PropTypes.string,
-    }),
+    username: PropTypes.string,
     createdDate: PropTypes.string,
   }).isRequired,
 };

@@ -43,7 +43,6 @@ router.get('/', asyncWrapper(async (req, res) => {
 
   const results = await PostModel
     .find(mongoQuery)
-    .populate('user', { username: 1 })
     .sort({ createdDate: -1 });
 
   // json():
@@ -55,7 +54,7 @@ router.get('/', asyncWrapper(async (req, res) => {
 router.get('/:id', asyncWrapper(async (req, res) => {
   // console.log('yes');
   // const details = await PostModel.findById(req.params.id);
-  const details = await PostModel.findById(req.params.id).populate('user', { username: 1 });
+  const details = await PostModel.findById(req.params.id);
 
   if (details) {
     res.status(200).json(details);
@@ -109,7 +108,7 @@ router.post('/', asyncWrapper(async (req, res) => {
     text,
     createdDate: new Date(),
     // eslint-disable-next-line no-underscore-dangle
-    user: user ? user._id : null,
+    userId: user._id,
   });
 
   const savedPost = await post.save();

@@ -21,7 +21,6 @@ const UserSchema = new Schema({
     type: String,
     required: true,
   },
-  // これ要るか？
   posts: [
     {
       type: Schema.Types.ObjectId,
