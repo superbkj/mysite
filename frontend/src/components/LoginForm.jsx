@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { info, error } from '../utils/logger';
+import { error } from '../utils/logger';
 
 function LoginForm() {
   const [email, setEmail] = useState('');
@@ -24,7 +24,14 @@ function LoginForm() {
       body: JSON.stringify({ email, password }),
     })
       .then((res) => res.json())
-      .then((data) => info(data.token, data.username))
+      .then((data) => {
+        window.localStorage.setItem(
+          'user',
+          JSON.stringify(data),
+        );
+        setEmail('');
+        setPassword('');
+      })
       .catch((err) => error(err));
   };
 

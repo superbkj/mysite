@@ -2,5 +2,8 @@
   "extends": ["airbnb", "airbnb/hooks"],
   "rules": {
     "import/no-extraneous-dependencies": ["error",  {"devDependencies": true}]
+  },
+  "env": {
+    "browser": true
   }
 }
