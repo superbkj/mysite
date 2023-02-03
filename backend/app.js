@@ -38,16 +38,22 @@ app.use((req, res) => {
 
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
+  console.log('error');
   if (err.name === 'CastError') {
+    console.log('casterror');
     // 400: Bad Request
     res.status(400).send({ error: 'malformatted id' });
   } else if (err.name === 'ValidationError') {
+    console.log('validation');
     res.status(400).send({ error: err });
   } else if (err.name === 'JsonWebTokenError') {
+    console.log('jwt');
     res.status(401).send({ error: 'token missing or invalid' });
   } else if (err.name === 'TokenExpiredError') {
+    console.log('expired');
     res.status(401).send({ error: 'token expired' });
   } else {
+    console.log('500');
     // 500: Internal server error
     res.status(err.status || 500).send(`<h1>Something went wrong</h1><p>${err}</p>`);
   }

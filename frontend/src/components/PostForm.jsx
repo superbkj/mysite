@@ -22,6 +22,11 @@ function PostForm() {
     setText(event.target.value);
   };
 
+  let token = null;
+  const setToken = (newToken) => {
+    token = `Bearer ${newToken}`;
+  };
+
   const handleSubmitClick = (event) => {
     event.preventDefault();
 
@@ -35,6 +40,9 @@ function PostForm() {
       return;
     }
 
+    const loggedInUser = JSON.parse(window.localStorage.getItem('mySiteLoggedInUser'));
+    setToken(loggedInUser.token);
+
     // Slash at the start of a path
     // ensures that the path is not relative
     // but read from the root of the site
@@ -42,17 +50,20 @@ function PostForm() {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: token,
       },
       body: JSON.stringify({ title, lead, text }),
     })
       .then((res) => res.json())
       .then((data) => {
+        console.log(data);
         setTitle('');
         setLead('');
         setText('');
         setValidationMessage(data.message);
       })
-      .catch((err) => error(err));
+      // 401 Errorはこっちでキャッチしたい
+      .catch((err) => error(err.error));
   };
 
   return (

@@ -26,7 +26,7 @@ function LoginForm() {
       .then((res) => res.json())
       .then((data) => {
         window.localStorage.setItem(
-          'user',
+          'mySiteLoggedInUser',
           JSON.stringify(data),
         );
         setEmail('');
