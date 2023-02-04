@@ -75,7 +75,7 @@ function PostForm() {
       </label>
       <label htmlFor="lead">
         Lead
-        <input id="lead" required type="text" value={lead} onChange={handleLeadChange} />
+        <input id="lead" type="text" value={lead} onChange={handleLeadChange} />
       </label>
       <label htmlFor="content">
         Content
