@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { error } from '../utils/logger';
+import { error, info } from '../utils/logger';
 
 function PostForm() {
   const [title, setTitle] = useState('');
@@ -43,6 +43,8 @@ function PostForm() {
     const loggedInUser = JSON.parse(window.localStorage.getItem('mySiteLoggedInUser'));
     setToken(loggedInUser.token);
 
+    let success = true;
+
     // Slash at the start of a path
     // ensures that the path is not relative
     // but read from the root of the site
@@ -54,16 +56,28 @@ function PostForm() {
       },
       body: JSON.stringify({ title, lead, text }),
     })
-      .then((res) => res.json())
+      .then((res) => {
+        // fetch() will reject in case of a network error,
+        // and NOT in case of other errors such as 404, 500.
+        // So handling them manually by checking res.ok property as below:
+        if (!res.ok) {
+          success = false;
+        }
+        return res.json();
+      })
       .then((data) => {
-        console.log(data);
-        setTitle('');
-        setLead('');
-        setText('');
-        setValidationMessage(data.message);
+        if (success) {
+          info(data);
+          setTitle('');
+          setLead('');
+          setText('');
+          setValidationMessage('');
+        } else {
+          throw new Error(data.error);
+        }
       })
       // 401 Errorはこっちでキャッチしたい
-      .catch((err) => error(err.error));
+      .catch((err) => error(err));
   };
 
   return (
