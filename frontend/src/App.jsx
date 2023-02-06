@@ -13,6 +13,38 @@ import { info, error } from './utils/logger';
 
 function App() {
   const [message, setMessage] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleEmailChange = (event) => {
+    setEmail(event.target.value);
+  };
+
+  const handlePasswordChange = (event) => {
+    setPassword(event.target.value);
+  };
+
+  const handleLogin = (event) => {
+    event.preventDefault();
+
+    fetch('/api/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        window.localStorage.setItem(
+          'mySiteLoggedInUser',
+          JSON.stringify(data),
+        );
+        setEmail('');
+        setPassword('');
+      })
+      .catch((err) => error(err));
+  };
 
   const handleHelloClick = () => {
     fetch('/api/hello')
@@ -34,7 +66,13 @@ function App() {
     // so JSX attributes mirror this convention
     <div className="App">
       <button type="button" onClick={handleLoadClick}>Load Test Data</button>
-      <LoginForm />
+      <LoginForm
+        email={email}
+        password={password}
+        onEmailChange={handleEmailChange}
+        onPasswordChange={handlePasswordChange}
+        onLogin={handleLogin}
+      />
       <BrowserRouter>
         <Header />
         <Routes>
