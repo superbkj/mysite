@@ -42,6 +42,7 @@ function App() {
         );
         setEmail('');
         setPassword('');
+        // info(data);
       })
       .catch((err) => error(err));
   };
