@@ -76,7 +76,7 @@ function PostForm() {
           throw new Error(data.error);
         }
       })
-      // 401 Errorはこっちでキャッチしたい
+      // 401 Errorもこっちでキャッチしたい
       .catch((err) => error(err));
   };
 

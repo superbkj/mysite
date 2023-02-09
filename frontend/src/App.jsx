@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import Header from './components/Header';
@@ -15,6 +15,17 @@ function App() {
   const [message, setMessage] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loggedInUser, setLoggedInUser] = useState('');
+
+  useEffect(() => {
+    const storedUser = window.localStorage.getItem('mySiteLoggedInUser');
+    if (storedUser) {
+      // console.log(typeof storedUser);
+      setLoggedInUser(JSON.parse(storedUser).username);
+    } else {
+      info('No user stored');
+    }
+  }, []);
 
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
@@ -27,6 +38,8 @@ function App() {
   const handleLogin = (event) => {
     event.preventDefault();
 
+    let success = true;
+
     fetch('/api/login', {
       method: 'POST',
       headers: {
@@ -34,15 +47,27 @@ function App() {
       },
       body: JSON.stringify({ email, password }),
     })
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) {
+          success = res.ok;
+        }
+        res.json();
+      })
       .then((data) => {
-        window.localStorage.setItem(
-          'mySiteLoggedInUser',
-          JSON.stringify(data),
-        );
-        setEmail('');
-        setPassword('');
-        // info(data);
+        if (success) {
+          window.localStorage.setItem(
+            'mySiteLoggedInUser',
+            JSON.stringify(data),
+          );
+          setEmail('');
+          setPassword('');
+          // undefinedをセットしてしまうと、
+          // 取り出すとき'undefined'という文字列になって
+          // 困るのでその場合はセットしない
+          if (data.username) setLoggedInUser(data.username);
+        } else {
+          throw new Error(data.error);
+        }
       })
       .catch((err) => error(err));
   };
@@ -74,6 +99,7 @@ function App() {
         onPasswordChange={handlePasswordChange}
         onLogin={handleLogin}
       />
+      <p>{`Hello ${loggedInUser}`}</p>
       <BrowserRouter>
         <Header />
         <Routes>
