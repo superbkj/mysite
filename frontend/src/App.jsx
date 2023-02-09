@@ -18,10 +18,11 @@ function App() {
   const [loggedInUser, setLoggedInUser] = useState('');
 
   useEffect(() => {
-    const storedUser = window.localStorage.getItem('mySiteLoggedInUser');
-    if (storedUser) {
-      // console.log(typeof storedUser);
-      setLoggedInUser(JSON.parse(storedUser).username);
+    const storedUserStr = window.localStorage.getItem('mySiteLoggedInUser');
+    if (storedUserStr && (storedUserStr !== 'undefined')) {
+      const storedUserObj = JSON.parse(storedUserStr);
+      info('Stored user:', storedUserObj.username);
+      setLoggedInUser(storedUserObj.username);
     } else {
       info('No user stored');
     }
@@ -51,20 +52,22 @@ function App() {
         if (!res.ok) {
           success = res.ok;
         }
-        res.json();
+        return res.json();
       })
       .then((data) => {
         if (success) {
-          window.localStorage.setItem(
-            'mySiteLoggedInUser',
-            JSON.stringify(data),
-          );
+          // undefinedをlocalStorageにセットしてしまうと、
+          // 取り出すとき'undefined'という文字列になって困るので、
+          // 値がundefinedの場合はセットしない
+          if (data && data.username) {
+            window.localStorage.setItem(
+              'mySiteLoggedInUser',
+              JSON.stringify(data),
+            );
+          }
           setEmail('');
           setPassword('');
-          // undefinedをセットしてしまうと、
-          // 取り出すとき'undefined'という文字列になって
-          // 困るのでその場合はセットしない
-          if (data.username) setLoggedInUser(data.username);
+          if (data && data.username) setLoggedInUser(data.username);
         } else {
           throw new Error(data.error);
         }
