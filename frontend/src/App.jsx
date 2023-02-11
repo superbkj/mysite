@@ -63,11 +63,11 @@ function App() {
             window.localStorage.setItem(
               'mySiteLoggedInUser',
               JSON.stringify(data),
+              setLoggedInUser(data.username),
             );
           }
           setEmail('');
           setPassword('');
-          if (data && data.username) setLoggedInUser(data.username);
         } else {
           throw new Error(data.error);
         }
