@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { useCookies } from 'react-cookie';
 
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -15,8 +17,13 @@ function App() {
   const [message, setMessage] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [loggedInUser, setLoggedInUser] = useState('');
+  // const [loggedInUser, setLoggedInUser] = useState('');
 
+  // Specify a list of cookie names that should trigger a re-render.
+  // If unspecified, it will render on every cookie change.
+  const [cookies, setCookie, removeCookie] = useCookies(['loggedInUser']);
+
+  /*
   useEffect(() => {
     const storedUserStr = window.localStorage.getItem('mySiteLoggedInUser');
     if (storedUserStr && (storedUserStr !== 'undefined')) {
@@ -27,6 +34,7 @@ function App() {
       info('No user stored');
     }
   }, []);
+  */
 
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
@@ -60,11 +68,10 @@ function App() {
           // 取り出すとき'undefined'という文字列になって困るので、
           // 値がundefinedの場合はセットしない
           if (data && data.username) {
-            window.localStorage.setItem(
-              'mySiteLoggedInUser',
-              JSON.stringify(data),
-              setLoggedInUser(data.username),
-            );
+            // setCookie(name, value, [options])
+            // value (string|object):
+            // save the value and stringify the object if needed
+            setCookie('loggedInUser', data);
           }
           setEmail('');
           setPassword('');
@@ -102,7 +109,7 @@ function App() {
         onPasswordChange={handlePasswordChange}
         onLogin={handleLogin}
       />
-      <p>{`Hello ${loggedInUser}`}</p>
+      <p>{`Hello ${cookies.loggedInUser.username}`}</p>
       <BrowserRouter>
         <Header />
         <Routes>
