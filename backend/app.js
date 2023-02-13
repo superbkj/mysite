@@ -3,6 +3,8 @@ require('dotenv').config();
 
 const express = require('express');
 const path = require('path');
+// eslint-disable-next-line import/no-extraneous-dependencies
+const cookieParser = require('cookie-parser');
 
 const postRoutes = require('./routes/postRoutes');
 const userRoutes = require('./routes/userRoutes');
@@ -15,6 +17,9 @@ const app = express();
 
 // To parse incoming requests with JSON payloads
 app.use(express.json());
+
+// To parse incoming requests with some cookie
+app.use(cookieParser());
 
 // In production, serve frontend from dist folder
 app.use(express.static(`${path.resolve(__dirname, '..')}/frontend/dist`));

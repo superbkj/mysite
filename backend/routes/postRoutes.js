@@ -63,6 +63,7 @@ router.get('/:id', asyncWrapper(async (req, res) => {
   }
 }));
 
+/*
 // isolates the token from the authorization header.
 const getTokenFrom = (request) => {
   const authorization = request.get('authorization');
@@ -78,6 +79,7 @@ const getTokenFrom = (request) => {
   }
   return null;
 };
+*/
 
 router.post('/', asyncWrapper(async (req, res) => {
   const {
@@ -86,13 +88,21 @@ router.post('/', asyncWrapper(async (req, res) => {
     text,
   } = req.body;
 
+  const cookie = req.cookies.loggedInUser;
+  let token;
+
+  if (cookie) {
+    token = JSON.parse(cookie).token;
+    info(token);
+  }
+
   // The validity of the token is checked with jwt.verify.
   // The method also decodes the token,
   // in other words, returns the Object which the token was based on.
   // (Object used when jwt.sign ?)
   // If the token is missing or is it invalid,
   // the exception JsonWebTokenError is raised
-  const decodedToken = jwt.verify(getTokenFrom(req), process.env.SECRET);
+  const decodedToken = jwt.verify(token, process.env.SECRET);
 
   if (!decodedToken.id) {
     return response.status(401).json({ error: 'token invalid' });
