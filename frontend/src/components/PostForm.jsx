@@ -77,7 +77,10 @@ function PostForm() {
         }
       })
       // 401 Errorもこっちでキャッチしたい
-      .catch((err) => error(err));
+      .catch((err) => {
+        setValidationMessage(err.message);
+        error(err);
+      });
   };
 
   return (
