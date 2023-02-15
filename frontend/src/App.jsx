@@ -21,7 +21,7 @@ function App() {
 
   // Specify a list of cookie names that should trigger a re-render.
   // If unspecified, it will render on every cookie change.
-  const [cookies, setCookie, removeCookie] = useCookies(['loggedInUser']);
+  const [cookies, setCookie] = useCookies(['loggedInUser']);
 
   /*
   useEffect(() => {
