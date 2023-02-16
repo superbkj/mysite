@@ -30,7 +30,7 @@ beforeEach(async () => {
 
   const promiseArray = helper.initialPosts.map((post) => {
     // eslint-disable-next-line no-underscore-dangle
-    const postObj = new PostModel({ ...post, user: testuserObj._id });
+    const postObj = new PostModel({ ...post, userId: testuserObj._id });
     return postObj.save();
   });
 
@@ -39,6 +39,32 @@ beforeEach(async () => {
   // into a single promise, that will be fulfilled
   // once every promise in the array passed to it as a parameter is resolved
   await Promise.all(promiseArray);
+});
+
+describe('User logging in', () => {
+  const user = helper.initialUsers[0];
+  test('succeeds with valid email and password', async () => {
+    const response = await api
+      .post('/api/login')
+      .send({ email: user.email, password: user.password })
+      .expect(200);
+
+    expect(response.body.username).toEqual(user.username);
+  });
+
+  test('fails with invalid email', async () => {
+    await api
+      .post('/api/login')
+      .send({ email: 'invalid@invalid.com', password: user.password })
+      .expect(401);
+  });
+
+  test('fails with invalid password', async () => {
+    await api
+      .post('/api/login')
+      .send({ email: user.username, password: 'invalid' })
+      .expect(401);
+  });
 });
 
 // There are two types of expect() ?
@@ -216,32 +242,6 @@ describe('Creation of users', () => {
 
 // describe('When searching users,' () => {});
 // describe('Viewing a specific user' () => {});
-
-describe('User logging in', () => {
-  const user = helper.initialUsers[0];
-  test('succeeds with valid email and password', async () => {
-    const response = await api
-      .post('/api/login')
-      .send({ email: user.email, password: user.password })
-      .expect(200);
-
-    expect(response.body.username).toEqual(user.username);
-  });
-
-  test('fails with invalid email', async () => {
-    await api
-      .post('/api/login')
-      .send({ email: 'invalid@invalid.com', password: user.password })
-      .expect(401);
-  });
-
-  test('fails with invalid password', async () => {
-    await api
-      .post('/api/login')
-      .send({ email: user.username, password: 'invalid' })
-      .expect(401);
-  });
-});
 
 afterAll(async () => {
   await mongoose.connection.close();

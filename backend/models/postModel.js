@@ -39,7 +39,7 @@ const PostSchema = new Schema({
 // to set the value for the required field.
 // Mongoose validates documents before saving.
 PostSchema.pre('validate', async function (next) {
-  // In below case, 'this' will be
+  // In below case, 'this' would be
   // current file if inside arrow function, which is not expected
   // caller object (post instance) if inside 'function' function, which is expected
   const { username } = await UserModel.findById(this.userId).select('username');
