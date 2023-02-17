@@ -94,13 +94,22 @@ describe('When getting initial posts', () => {
 });
 
 describe('Adding a post', () => {
+  const user = helper.initialUsers[0];
+
   test('fails with an invalid input', async () => {
+    const loginResponse = await api
+      .post('/api/login')
+      .send({ email: user.email, password: user.password });
+
+    const data = loginResponse.body;
+
     const newPost = {
       title: 'I have only title',
     };
 
     await api
       .post('/api/posts')
+      .set('Cookie', [`loggedInUser=${JSON.stringify(data)}`])
       .send(newPost)
       .expect(400); // 400: Bad Request
 
@@ -110,18 +119,25 @@ describe('Adding a post', () => {
   });
 
   test('succeeds with valid input', async () => {
-    const user = await UserModel.findOne({});
+    const loginResponse = await api
+      .post('/api/login')
+      .send({ email: user.email, password: user.password });
+
+    const data = loginResponse.body;
+    const userFoundInDB = await UserModel.findOne({ email: user.email });
+
     const newPost = {
       title: 'NEW POST',
       // lead: 'This is a new post',
       text: 'This is a new post created for testing purpose',
       createdDate: new Date(),
       // eslint-disable-next-line no-underscore-dangle
-      userId: user._id,
+      userId: userFoundInDB._id,
     };
 
     await api
       .post('/api/posts')
+      .set('Cookie', [`loggedInUser=${JSON.stringify(data)}`])
       .send(newPost)
       .expect(201)
       .expect('Content-Type', /application\/json/);
