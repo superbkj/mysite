@@ -96,6 +96,21 @@ describe('When getting initial posts', () => {
 describe('Adding a post', () => {
   const user = helper.initialUsers[0];
 
+  test('fails without login', async () => {
+    const newPost = {
+      title: 'I have only title',
+    };
+
+    await api
+      .post('/api/posts')
+      .send(newPost)
+      .expect(401); // 401: Unauthorized
+
+    const postsAtEnd = await helper.postsInDb();
+
+    expect(postsAtEnd).toHaveLength(helper.initialPosts.length);
+  });
+
   test('fails with an invalid input', async () => {
     const loginResponse = await api
       .post('/api/login')
