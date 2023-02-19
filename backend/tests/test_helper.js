@@ -55,7 +55,8 @@ const nonExistingId = async () => {
     text: 'Will remove',
     createdDate: new Date(),
     // eslint-disable-next-line no-underscore-dangle
-    user: user._id,
+    userId: user._id,
+    username: user.username,
   });
   await post.save();
   await post.remove();
