@@ -16,9 +16,14 @@ router.post('/', asyncWrapper(async (req, res) => {
 
   if (!(user && passwordCorrect)) {
     // 401: Unauthorized ログインに失敗したり、権限がないときに出す
+    /*
     return res.status(401).json({
       error: 'invalid email or password',
     });
+    */
+    const err = new Error('invalid email or password');
+    err.name = 'CredentialsError';
+    throw err;
   }
 
   const userForToken = {

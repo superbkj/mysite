@@ -57,6 +57,9 @@ app.use((err, req, res, next) => {
   } else if (err.name === 'TokenExpiredError') {
     console.log('expired');
     res.status(401).send({ error: 'token expired' });
+  } else if (err.name === 'CredentialsError') {
+    console.log('credentials');
+    res.status(401).send({ error: 'invalid email or password' });
   } else {
     console.log('500');
     // 500: Internal server error
