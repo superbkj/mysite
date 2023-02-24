@@ -110,21 +110,19 @@ function App() {
         onLogin={handleLogin}
       />
       <p>{`Hello ${cookies.loggedInUser.username}`}</p>
-      <BrowserRouter>
-        <Header />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/latest" element={<Latest />} />
-          <Route path="/search" element={<Search />} />
-          <Route path="/make-a-post" element={<PostForm />} />
-          <Route path="/posts/:id" element={<PostDetails />} />
-        </Routes>
-        <p>
-          {`Message from backend: ${message}`}
-        </p>
-        <button type="button" onClick={handleHelloClick}>Hello</button>
-        <Footer />
-      </BrowserRouter>
+      <Header />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/latest" element={<Latest />} />
+        <Route path="/search" element={<Search />} />
+        <Route path="/make-a-post" element={<PostForm />} />
+        <Route path="/posts/:id" element={<PostDetails />} />
+      </Routes>
+      <p>
+        {`Message from backend: ${message}`}
+      </p>
+      <button type="button" onClick={handleHelloClick}>Hello</button>
+      <Footer />
     </div>
   );
 }

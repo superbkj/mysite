@@ -14,7 +14,7 @@ test('renders content', () => {
     title: 'test title',
     lead: 'test lead',
     // text: 'test text',
-    createdDate: new Date(),
+    createdDate: new Date().toString(),
     _id: 'test userid',
     username: 'test username',
   };
