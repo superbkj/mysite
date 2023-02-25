@@ -6,6 +6,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 // We also installed jest-dom which provides some nice Jest-related helper methods.
 import '@testing-library/jest-dom/extend-expect';
+import { MemoryRouter } from 'react-router-dom';
 
 import Post from './Post';
 
@@ -21,7 +22,7 @@ test('renders content', () => {
 
   // renders the components in a format that is suitable
   // for tests without rendering them to the DOM
-  render(<Post post={post} />);
+  render(<Post post={post} />, {wrapper: MemoryRouter});
 
   const element = screen.getByText('test title');
   expect(element).toBeDefined();
