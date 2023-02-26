@@ -7,7 +7,7 @@ function Post(props) {
   const { post } = props;
 
   return (
-    <div className="post-container">
+    <div className="post">
       {/* eslint-disable-next-line no-underscore-dangle */}
       <Link to={`/posts/${post._id}`}>
         <h2>{post.title}</h2>

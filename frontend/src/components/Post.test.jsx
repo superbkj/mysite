@@ -10,20 +10,26 @@ import { MemoryRouter } from 'react-router-dom';
 
 import Post from './Post';
 
+const dateStr = new Date().toString();
+
 test('renders content', () => {
   const post = {
     title: 'test title',
     lead: 'test lead',
     // text: 'test text',
-    createdDate: new Date().toString(),
+    createdDate: dateStr,
     _id: 'test userid',
     username: 'test username',
   };
 
   // renders the components in a format that is suitable
   // for tests without rendering them to the DOM
-  render(<Post post={post} />, {wrapper: MemoryRouter});
+  const { container } = render(<Post post={post} />, {wrapper: MemoryRouter});
+  const div = container.querySelector('.post');
 
-  const element = screen.getByText('test title');
-  expect(element).toBeDefined();
+  expect(div).toHaveTextContent('test title');
+  expect(div).toHaveTextContent('test lead');
+  expect(div).toHaveTextContent(dateStr);
+  //expect(div).toHaveTextContent('test userid');
+  expect(div).toHaveTextContent('test username');
 });
