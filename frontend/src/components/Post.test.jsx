@@ -23,9 +23,14 @@ test('renders content', () => {
   };
 
   // renders the components in a format that is suitable
-  // for tests without rendering them to the DOM
+  // for tests without rendering them to the DOM.
+  // MemoryRouter to avoid the error: useHref() may be used only in the context of a <Router> component
   const { container } = render(<Post post={post} />, {wrapper: MemoryRouter});
+  // the method querySelector of the object container
+  // that is one of the fields returned by the render
   const div = container.querySelector('.post');
+
+  screen.debug(div);
 
   expect(div).toHaveTextContent('test title');
   expect(div).toHaveTextContent('test lead');
