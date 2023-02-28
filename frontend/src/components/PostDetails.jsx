@@ -19,13 +19,13 @@ function PostDetails() {
   }
 
   return (
-    <>
+    <div className="post_details">
       <h2>{details.title}</h2>
       <p>{details.lead}</p>
       <p>{details.username}</p>
       <p>{details.text}</p>
       <p>{details.createdDate}</p>
-    </>
+    </div>
   );
 }
 
