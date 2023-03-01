@@ -12,7 +12,7 @@ import Post from './Post';
 
 const dateStr = new Date().toString();
 
-test('renders content', () => {
+test('renders post', () => {
   const post = {
     title: 'test title',
     lead: 'test lead',
