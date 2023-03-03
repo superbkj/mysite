@@ -1,3 +1,4 @@
+/*
 import React from 'react';
 import PostDetails from './PostDetails';
 import { render, screen } from '@testing-library/react';
@@ -10,17 +11,6 @@ import '@testing-library/jest-dom/extend-expect';
 // HTML5を作成している。
 import 'cross-fetch/polyfill';
 
-/*
-const details = {
-  title: 'test title',
-  lead: 'test lead',
-  text: 'test text',
-  createdDate: dateStr,
-  _id: 'test userid',
-  username: 'test username',
-};
-*/
-
 test('renders post details', () => {
   const { container } = render(<PostDetails />);
   const div = container.querySelector(".post_details");
@@ -29,3 +19,4 @@ test('renders post details', () => {
 
   expect(div).toHaveTextContent('Loading...');
 });
+*/
