@@ -7,7 +7,7 @@ import Header from './Header';
 
 test('renders header', () => {
   const { container } = render(<Header />, {wrapper: MemoryRouter});
-  const div = container.querySelector('.navbar');
+  const div = container.querySelector('.header');
 
   screen.debug(div);
 
