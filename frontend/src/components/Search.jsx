@@ -28,7 +28,7 @@ function Search() {
   };
 
   return (
-    <>
+    <div className="search">
       <form>
         <label htmlFor="keywords">
           Keywords
@@ -37,7 +37,7 @@ function Search() {
         <button type="submit" onClick={handleSearchClick}>Search</button>
       </form>
       {results && <PostList posts={results} />}
-    </>
+    </div>
   );
 }
 
