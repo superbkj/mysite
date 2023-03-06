@@ -11,7 +11,7 @@ function LoginForm(props) {
   } = props;
 
   return (
-    <form onSubmit={onLogin}>
+    <form className="login_form" onSubmit={onLogin}>
       <label htmlFor="email">
         Email
         <input type="text" id="email" value={email} onChange={onEmailChange} />
