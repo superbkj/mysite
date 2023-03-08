@@ -9,7 +9,7 @@ test('renders footer', () => {
   const { container } = render(<Footer />, {wrapper: MemoryRouter});
   const div = container.querySelector('.footer');
 
-  screen.debug(div);
+  //screen.debug(div);
 
   expect(div).toHaveTextContent('Footer here');
 });

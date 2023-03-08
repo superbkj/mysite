@@ -18,17 +18,34 @@ test('renders login form', () => {
 });
 
 test('clicking login button calls event handler once', async () => {
+  const props = {
+    email,
+    password,
+    onEmailChange,
+    onPasswordChange,
+    onLogin,
+  };
+  
   // mock function defined with Jest
-  const mockHandler = jest.fn();
-  
-  render(<LoginForm />);
-  
+  const mockSubmitHandler = jest.fn();
   // A session is started to interact with the rendered component:
   const user = userEvent.setup();
 
-  const button = screen.getByText('Login');
-  // Clicking happens with the method click of the userEvent-library
-  await user.click(button);
+  const { container } = render(<LoginForm />);
 
-  expect(mockHandler.mock.calls).toHaveLength(1);
+  const email = container.querySelector("#email");
+  const password = container.querySelector("#password");
+
+  await user.type(email, 'abc@abc.com');
+  await user.type(password, 'abc');
+
+  const loginButton = screen.getByText('Login');
+  // Clicking happens with the method click of the userEvent-library
+  await user.click(loginButton);
+
+  expect(mockSubmitHandler.mock.calls).toHaveLength(1);
+  expect(mockSubmitHandler.mock.calls[0][0].content).toBe('abc@abc.com');
+  // checks that the event handler is called with the right parameters
+  // that a note with the correct content is created when the form is filled
+  expect(mockSubmitHandler.mock.calls[0][1].content).toBe('abc');
 });

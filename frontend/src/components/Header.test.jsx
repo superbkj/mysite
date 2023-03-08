@@ -9,7 +9,7 @@ test('renders header', () => {
   const { container } = render(<Header />, {wrapper: MemoryRouter});
   const div = container.querySelector('.header');
 
-  screen.debug(div);
+  //screen.debug(div);
 
   expect(div).toHaveTextContent('My Site');
   expect(div).toHaveTextContent('Latest');
